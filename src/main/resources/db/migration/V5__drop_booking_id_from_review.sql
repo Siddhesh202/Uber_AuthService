@@ -1,0 +1,7 @@
+ALTER TABLE booking_review
+DROP
+FOREIGN KEY FK_BOOKING_REVIEW_ON_BOOKING;
+
+ALTER TABLE booking_review
+DROP
+COLUMN booking_id;
