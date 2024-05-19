@@ -24,7 +24,7 @@ public class JwtService implements CommandLineRunner {
     @Value("${jwt.secret}")
     private String SECRET;
 
-    private String createToken(Map<String, Object> payload, String name) {
+    public String createToken(Map<String, Object> payload, String email) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expiry * 1000L);
 
@@ -32,9 +32,13 @@ public class JwtService implements CommandLineRunner {
                 .claims(payload)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(expiryDate)
-                .subject(name)
+                .subject(email)
                 .signWith(getSignInKey())
                 .compact();
+    }
+
+    public String createToken(String email) {
+        return createToken(new HashMap<>(), email);
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
@@ -58,7 +62,7 @@ public class JwtService implements CommandLineRunner {
         return extractClaim(token, Claims::getExpiration).before(new Date());
     }
 
-    private String extractSubject(String token) {
+    public String extractSubject(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
@@ -66,12 +70,12 @@ public class JwtService implements CommandLineRunner {
         return Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
     }
 
-    private Boolean validateToken(String token, String email) {
+    public Boolean validateToken(String token, String email) {
         final String userEmailFetchedFromToken = extractSubject(token);
         return (userEmailFetchedFromToken.equals(email)) && !isTokenExpired(token);
     }
 
-    private String extractPayload(String token, String payloadKey) {
+    public String extractPayload(String token, String payloadKey) {
         Claims claim = extractAllClaims(token);
         return (String) claim.get(payloadKey);
     }
@@ -80,11 +84,11 @@ public class JwtService implements CommandLineRunner {
     public void run(String... args) throws Exception {
         Map<String, Object> mp = new HashMap<>();
         mp.put("phoneNumber", "999999999");
-        mp.put("email", "a@b.com");
-        String result = createToken(mp, "Siddhesh");
+//        mp.put("email", "a@b.com");
+        String result = createToken(mp, "abc@gmail.com");
         System.out.println("Generated token is : " + result);
         System.out.println(extractPayload(result, "phoneNumber"));
-        System.out.println(extractPayload(result, "email"));
+//        System.out.println(extractPayload(result, "email"));
         System.out.println(extractSubject(result));
     }
 }
