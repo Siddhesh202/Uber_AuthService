@@ -4,13 +4,12 @@ import com.example.authservice.dto.AuthRequestDto;
 import com.example.authservice.dto.AuthResponseDto;
 import com.example.authservice.dto.PassengerDto;
 import com.example.authservice.dto.PassengerSignupRequestDto;
-import com.example.authservice.models.Passenger;
 import com.example.authservice.services.AuthService;
 import com.example.authservice.services.JwtService;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.freemarker.FreeMarkerTemplateAvailabilityProvider;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -20,9 +19,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -64,9 +60,12 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/validate/passenger")
-    public ResponseEntity<?> validatePassenger(HttpServletRequest request) {
-        request.getCookies();
-        return ResponseEntity.ok("User not found");
+    @GetMapping("/validate")
+    public ResponseEntity<?> validatePassenger(HttpServletRequest request, HttpServletResponse response) {
+//        System.out.println("Inside Validate Controller");
+        for(Cookie cookie: request.getCookies()) {
+            System.out.println(cookie.getName() + " " + cookie.getValue());
+        }
+        return new ResponseEntity<>("Success", HttpStatus.OK);
     }
 }

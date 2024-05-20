@@ -55,10 +55,10 @@ public class JwtService implements CommandLineRunner {
                 .getBody();
     }
 
-    private Date extractExpiration(String token) {
+    public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
-    private Boolean isTokenExpired(String token) {
+    public Boolean isTokenExpired(String token) {
         return extractClaim(token, Claims::getExpiration).before(new Date());
     }
 
@@ -66,7 +66,7 @@ public class JwtService implements CommandLineRunner {
         return extractClaim(token, Claims::getSubject);
     }
 
-    private Key getSignInKey() {
+    public Key getSignInKey() {
         return Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
     }
 

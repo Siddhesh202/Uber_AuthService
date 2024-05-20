@@ -1,6 +1,7 @@
 package com.example.authservice.repositories;
 
-import com.example.authservice.models.Passenger;
+
+import com.example.entityservice.models.Passenger;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

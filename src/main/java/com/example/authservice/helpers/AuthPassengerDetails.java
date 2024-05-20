@@ -1,6 +1,6 @@
 package com.example.authservice.helpers;
 
-import com.example.authservice.models.Passenger;
+import com.example.entityservice.models.Passenger;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

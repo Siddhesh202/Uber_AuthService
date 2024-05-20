@@ -1,23 +1,20 @@
 package com.example.authservice.configurations;
 
+import com.example.authservice.filters.JwtAuthFilter;
 import com.example.authservice.services.UserDetailsServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -32,22 +29,22 @@ public class SpringSecurity implements WebMvcConfigurer {
         return new UserDetailsServiceImpl();
     }
 
+    @Autowired
+    private JwtAuthFilter jwtAuthFilter;
+
     @Bean
     public SecurityFilterChain filteringCriteria(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.disable())
-//                .headers(header ->
-//                    header.contentSecurityPolicy(csp ->
-//                            csp.policyDirectives("default-src 'self'; connect-src 'self' http://localhost:8081/api/v1/auth/signin/passenger;"
-//                            )
-//                    )
-//                )
                 .authorizeRequests(auth ->
                     auth
                     .requestMatchers("/api/v1/auth/aignup/*").permitAll()
                     .requestMatchers("/api/v1/auth/signin/*").permitAll()
-                ).authenticationProvider(authenticationProvider());
+                    .requestMatchers("api/v1/auth/validate").authenticated()
+                )
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -78,3 +75,9 @@ public class SpringSecurity implements WebMvcConfigurer {
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
     }
 }
+
+//headers(header ->
+//        header.contentSecurityPolicy(csp ->
+//            csp.policyDirectives("default-src 'self'; connect-src 'self' http://localhost:8081/api/v1/auth/signin/passenger;"
+//            )
+//        ))

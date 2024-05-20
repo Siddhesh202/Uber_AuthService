@@ -1,8 +1,8 @@
 package com.example.authservice.services;
 
 import com.example.authservice.helpers.AuthPassengerDetails;
-import com.example.authservice.models.Passenger;
 import com.example.authservice.repositories.PassengerRepository;
+import com.example.entityservice.models.Passenger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
